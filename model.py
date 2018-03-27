@@ -11,7 +11,7 @@ class model():
     def vector(self,size):
         arr_tmp=[]
         for i in range(size):
-            arr_tmp.append(0.5-random.random())
+            arr_tmp.append((0.5-random.random())/self.size)
         return np.array(arr_tmp)
 
     def getvector(self,name):
