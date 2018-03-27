@@ -34,7 +34,7 @@ class trainer():
             if tmp_n<0.001:
                 tmp_n=0.001
             self.n=random.random()*tmp_n
-            if i%1000==0:
+            if i%100==0:
                 self.tmpdic[i%100]=self.trainline(True)
             else:
                 self.tmpdic[i % 100] = self.trainline(False)
@@ -64,7 +64,7 @@ class trainer():
         else:
             flag[0]=1
         if renew:
-            self.weghtlayer+=self.weghtlayer_tmp/1000
+            self.weghtlayer+=self.weghtlayer_tmp/100
             self.weghtlayer_tmp=np.zeros((2,self.model.size))
         for i in range(len(softmax_out)):
             if flag[i]==1:
