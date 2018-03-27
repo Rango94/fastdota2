@@ -11,12 +11,14 @@ class trainer():
     weghtlayer=0
     N=0
     tmpdic={}
+    weghtlayer_tmp=0
     def __init__(self,md,n,f):
         self.n=n
         self.N=n
         self.model=md
         self.file=f
         self.weghtlayer=np.zeros((2,md.size))
+        self.weghtlayer_tmp=np.zeros((2,md.size))
 
     def train(self,time):
         for i in range(time):
@@ -28,16 +30,17 @@ class trainer():
                    if self.tmpdic[e]=="right":
                        r+=1
                 print(r/100)
-
-
             tmp_n=(1-i/time)*self.N
             if tmp_n<0.001:
                 tmp_n=0.001
             self.n=random.random()*tmp_n
-            self.tmpdic[i%100]=self.trainline()
+            if i%1000==0:
+                self.tmpdic[i%100]=self.trainline(True)
+            else:
+                self.tmpdic[i % 100] = self.trainline(False)
 
 
-    def trainline(self):
+    def trainline(self,renew):
         line=self.file.readl()
         radiant=line[0:5]
         dire=line[5:10]
@@ -60,17 +63,12 @@ class trainer():
             flag[1]=1
         else:
             flag[0]=1
-        # print(flag,label)
-
-        # if random.random()>0.9:
-        #     if (outlayer_value[0]>outlayer_value[1] and flag[0]>flag[1]) or (outlayer_value[0]<outlayer_value[1] and flag[0]<flag[1]):
-        #         print("right")
-        #     else:
-        #         print("wrong")
-
+        if renew:
+            self.weghtlayer+=self.weghtlayer_tmp/1000
+            self.weghtlayer_tmp=np.zeros((2,self.model.size))
         for i in range(len(softmax_out)):
             if flag[i]==1:
-                self.weghtlayer[i]+=self.n*(1-softmax_out[i])*train_vector
+                self.weghtlayer_tmp[i]+=self.n*(1-softmax_out[i])*train_vector
                 for hero in radiant:
                     hero_tmp=self.model.getvector(hero)
                     hero_tmp+=self.n*0.5*(1-softmax_out[i])*self.weghtlayer[i]
@@ -78,7 +76,7 @@ class trainer():
                     hero_tmp=self.model.getvector(hero)
                     hero_tmp-=self.n*0.5*(1-softmax_out[i])*self.weghtlayer[i]
             else:
-                self.weghtlayer[i]-=self.n*softmax_out[i]*train_vector
+                self.weghtlayer_tmp[i]-=self.n*softmax_out[i]*train_vector
                 for hero in radiant:
                     hero_tmp=self.model.getvector(hero)
                     hero_tmp-=self.n*0.5*softmax_out[i]*self.weghtlayer[i]
