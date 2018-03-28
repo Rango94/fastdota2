@@ -39,7 +39,7 @@ class trainer():
             if tmp_n<0.001:
                 tmp_n=0.001
             self.n=random.random()*tmp_n
-            if i%100==0 and i!=0:
+            if i%5000==0 and i!=0:
                 self.tmpdic[i%1000]=self.trainline(True)
             else:
                 self.tmpdic[i % 1000] = self.trainline(False)
@@ -69,7 +69,7 @@ class trainer():
             flag[0]=1
 
         if renew:
-            self.weghtlayer+=self.weghtlayer_tmp/100
+            self.weghtlayer+=self.weghtlayer_tmp/5000
             self.weghtlayer_tmp=np.zeros((2,self.model.size*2))
             for e in self.dic_tmp.keys():
                 if e in self.dic_tmp_num.keys():
